@@ -21,6 +21,8 @@ actions_list = {
   'clap': 0,
   'laugh': 0,
   'boo': 0,
+  'woo': 0,
+  'cry': 0,
 }
 
 

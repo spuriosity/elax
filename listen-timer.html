@@ -115,7 +115,7 @@
         <img src="https://media.giphy.com/media/bupsZiBKn7vAk/giphy.gif" style="display: none;" class="gif" />
         <!-- <img src="cargo-one-logo.png" class="logo" /> -->
       </div>
-      <div class="timer-container containers">
+      <div class="timer-container containers" style="display: none;">
         <div id="base-timer-label" class="base-timer__label">0:00</div>
         <div class="progress" style="height: 60px;">
           <div class="progress-bar" role="progressbar"></div>
@@ -209,6 +209,13 @@
     var laugh = new Audio('laugh.mp3');
     var boo = new Audio('boo.mp3');
 
+    var cry_one = new Audio('cry_one.m4a');
+    var cry_alot = new Audio('cry_alot.mp3');
+
+    var woo_one = new Audio('woo_one.m4a');
+    var woo_alot = new Audio('woo_alot.m4a');
+
+
     var playing_gif = false
     var gifs = {
       'clap': [
@@ -239,7 +246,32 @@
         'https://media.giphy.com/media/6IGNW4wiyU8Mw/giphy.gif',
         'https://media.giphy.com/media/13Ev9571xt8Bdm/giphy.gif',
         'https://media.giphy.com/media/l46CqUyDaeFmpqZ3i/giphy.gif'
-      ]
+      ],
+      'cry_level_1': [
+        'https://media.giphy.com/media/3fmRTfVIKMRiM/giphy.gif?cid=ecf05e47jpz8wk4vcuzlquiybxyoczk9b69hb84k47ertcjd&ep=v1_gifs_search&rid=giphy.gif&ct=g',
+        'https://media.giphy.com/media/X0QKGRNCxnwWs/giphy.gif?cid=ecf05e47jpz8wk4vcuzlquiybxyoczk9b69hb84k47ertcjd&ep=v1_gifs_search&rid=giphy.gif&ct=g',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHByeHVmbHF4djgxZWlscHZyb2lsczR6bWN0MW5xOGh1ZWxxNTVqbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/L95W4wv8nnb9K/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHByeHVmbHF4djgxZWlscHZyb2lsczR6bWN0MW5xOGh1ZWxxNTVqbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/OPU6wzx8JrHna/giphy.gif'
+      ],
+      'cry_level_2': [
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHByeHVmbHF4djgxZWlscHZyb2lsczR6bWN0MW5xOGh1ZWxxNTVqbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/QZIbPweLH20orIb84G/giphy.gif',
+        'https://media.giphy.com/media/jnQYWZ0T4mkhCmkzcn/giphy.gif?cid=ecf05e47jpz8wk4vcuzlquiybxyoczk9b69hb84k47ertcjd&ep=v1_gifs_search&rid=giphy.gif&ct=g',
+        'https://media.giphy.com/media/aFvULnr3fCDrW/giphy.gif?cid=ecf05e47ljc2my7txye6qo1g1i7azw70zjds1y4y1gre5vm6&ep=v1_gifs_search&rid=giphy.gif&ct=g'
+      ],
+      'woo_level_1': [
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3kwM3E5ODBlZjNyOWFwOHZ2a3d4bWY0MXZvbXpydTFjNmhodjJ3MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/WUEJFVkjszmIU/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3kwM3E5ODBlZjNyOWFwOHZ2a3d4bWY0MXZvbXpydTFjNmhodjJ3MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/YlmGTR5DwBf6gAqKAR/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNpcGZzbTh4a25sa3lpdXhrODBwcTd4N3F2eTg1ZjhiZHQ1MHQwbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l0NwC1UnHzAHfC50c/giphy.gif',
+        'https://media.giphy.com/media/PLscHbw08qQ7qDhpPw/giphy.gif?cid=ecf05e470drezxb54mgm7cduh89ojo3rj3pu1ntgoapmoiqb&ep=v1_gifs_related&rid=giphy.gif&ct=g',
+         ],
+      'woo_level_2': [
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzJ5YTR3ZDNnYXZ2Z3R0YzlwcTN0OHFkbmcycDM3emhuYjZldXJneCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/tXLpxypfSXvUc/giphy.gif',
+        'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2lpMHludHVjbDFma29sNThrczRnYWJiNHM2cHh3cXczemIwcmVvOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/imsP3HiNMHeY4eW00S/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNpcGZzbTh4a25sa3lpdXhrODBwcTd4N3F2eTg1ZjhiZHQ1MHQwbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/kjjRGpezebjaw/giphy.gif',
+        'https://media.giphy.com/media/zIq61N89sfvEA3ca1q/giphy.gif?cid=ecf05e478aet2bn97ftjh2qj75cqdml3z46mek6h52j3gbm6&ep=v1_gifs_related&rid=giphy.gif&ct=g',
+        'https://media.giphy.com/media/13uIkoBotSLGCKJGYW/giphy.gif?cid=ecf05e47rrnw0rokr2o2c3ovcg6epd9w52nih5a4oju7zq11&ep=v1_gifs_related&rid=giphy.gif&ct=g',
+        'https://media.giphy.com/media/hqU2Eotu8L8hIl1tlF/giphy.gif?cid=ecf05e47dg2fmi7sb7hh9h9x4f3lzsp8lnbg7hjbahiwvznm&ep=v1_gifs_related&rid=giphy.gif&ct=g'
+      ],
     }
 
     actions_list = {
@@ -308,7 +340,47 @@
             audio: boo
           }
         ],
-      }
+      },
+      'woo': {
+        3: [
+          {
+            volume: 0.2,
+            audio: woo_one
+          }
+        ],
+        5: [
+          {
+            volume: 0.4,
+            audio: woo_alot
+          }
+        ],
+        10: [
+          {
+            volume: 0.7,
+            audio: woo_alot
+          }
+        ],
+      },
+      'cry': {
+        3: [
+          {
+            volume: 0.1,
+            audio: cry_one
+          }
+        ],
+        5: [
+          {
+            volume: 0.1,
+            audio: cry_one
+          }
+        ],
+        10: [
+          {
+            volume: 0.7,
+            audio: cry_alot
+          }
+        ],
+      },
     }
 
 
@@ -338,7 +410,17 @@
       if (iteration_event_count == 0) {
         document.querySelector('.gif').style.display = 'none';
       } else if (previous_iteration_event_count == 0) {
-        gif_url = gifs[main_event][Math.floor(Math.random() * gifs[main_event].length)]
+        let gif_category = main_event;
+        
+        // Handle level-based GIFs for woo and cry
+        if (main_event === 'woo') {
+          gif_category = iteration_event_count >= 5 ? 'woo_level_2' : 'woo_level_1';
+        } else if (main_event === 'cry') {
+          gif_category = iteration_event_count >= 5 ? 'cry_level_2' : 'cry_level_1';
+        }
+        
+        gif_url = gifs[gif_category][Math.floor(Math.random() * gifs[gif_category].length)]
+        console.log(gif_url)
         document.querySelector('.gif').setAttribute('src', gif_url);
         document.querySelector('.gif').style.display = 'block';
       }

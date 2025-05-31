@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title>Hello, world!</title>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body,
+    html {
+      background-color: rgb(43, 43, 43);
+      height: 100%;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .wrap {
+      background: #1b2145;
+      background: linear-gradient(-45deg, #5765b6, #1b2145, #2c3e50, #34495e);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      width: 1385px;
+      height: 783px;
+      resize: both;
+      overflow: auto;
+    }
+
+    .gif {
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-height: 100%;
+    }
+
+    .logo {
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+    }
+
+    .content-wrapper {
+      height: 100%;
+      position: relative;
+    }
+
+    .gif-container {
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .timer-container {
+      padding: 10px;
+      display: inline-block;
+      position: absolute;
+      left: 2%;
+      right: 2%;
+      bottom: 0;
+    }
+
+    .timer-wrap {
+      margin: auto;
+    }
+
+    .base-timer__label {
+      font-size: 200px;
+      color: white;
+      font-weight: bold;
+      text-shadow: 10px 10px black;
+      text-align: left;
+    }
+
+    .progress-bar {
+      background: #2ecc71;
+      transition: 1s linear all;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div class="wrap resizable">
+    <div class="content-wrapper">
+      <div class="gif-container containers">
+        <img src="https://media.giphy.com/media/bupsZiBKn7vAk/giphy.gif" style="display: none;" class="gif" />
+        <!-- <img src="cargo-one-logo.png" class="logo" /> -->
+      </div>
+      <div class="timer-container containers">
+        <div id="base-timer-label" class="base-timer__label">0:00</div>
+        <div class="progress" style="height: 60px;">
+          <div class="progress-bar" role="progressbar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var reactionsStatus = true;
+    var timerSeconds = 0;
+    var timeLeft = 0;
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        console.log(timeLeft);
+        document.getElementById("base-timer-label").innerHTML = formatTime(
+          timeLeft
+        );
+        setProgressBarProgress(timeLeft);
+      }
+    }, 1000);
+
+    function addTime(seconds) {
+      timerSeconds += seconds;
+      timeLeft += seconds;
+    }
+
+
+    var timePassed = 0;
+    var timeLeft = timerSeconds;
+    var timerInterval;
+
+    function startTimer(seconds) {
+      timerSeconds = seconds;
+      timeLeft = timerSeconds;
+    }
+
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+
+      if (seconds < 10) {
+        seconds = `0${seconds}`;
+      }
+
+      return `${minutes}:${seconds}`;
+    }
+
+    var timer_ticking_audio = new Audio('timer-end.wav');
+    timer_ticking_audio.volume = 0.1
+    var time_warning = false
+    // var time_gif = false
+
+    function setProgressBarProgress(timeLeft) {
+      document.querySelector('.progress-bar').style.width = (100 - (timeLeft / timerSeconds * 100)) + '%';
+      if (timeLeft <= 2) {
+        if (time_warning == false) {
+          timer_ticking_audio.play();
+          time_warning = true;
+        }
+      } else if (timeLeft <= 10) {
+        document.querySelector('.progress-bar').style.background = '#e74c3c';
+        // if (time_gif == false) {
+        //   document.querySelector('.gif').setAttribute('src', 'https://media.giphy.com/media/QBd2kLB5qDmysEXre9/giphy.gif');
+        //   time_gif = true;
+        // }
+        // document.querySelector('.gif').style.display = 'block';
+        // setTimeout(() => {document.querySelector('.gif').style.display = 'none';}, 10000)
+      } else if (timeLeft <= 30) {
+        document.querySelector('.progress-bar').style.background = '#e67e22'
+      } else {
+        document.querySelector('.progress-bar').style.background = '#2ecc71'
+      }
+    }
+
+
+    var socket = io();
+    socket.on('connect', function () {
+      socket.emit('join', 'listeners');
+    });
+
+    var clap_one = new Audio('clap_one.mp3');
+    var clap_few = new Audio('clap_few.mp3');
+    var clap_alot = new Audio('clap_alot.mp3');
+    var clap_whistle = new Audio('clap_whistle.mp3');
+    var laugh = new Audio('laugh.mp3');
+    var boo = new Audio('boo.mp3');
+
+    var playing_gif = false
+    var gifs = {
+      'clap': [
+        'https://media.giphy.com/media/l3q2XhfQ8oCkm1Ts4/giphy.gif',
+        'https://media.giphy.com/media/ZU9QbQtuI4Xcc/giphy.gif',
+        'https://media.giphy.com/media/cdXpgeB32BekIGzBNh/giphy.gif',
+        'https://media.giphy.com/media/humidv0MqqdO5ZoYhn/giphy.gif',
+        'https://media.giphy.com/media/26gsspfbt1HfVQ9va/giphy.gif',
+        'https://media.giphy.com/media/l49JCSwMXyxHnYJws/giphy.gif',
+        'https://media.giphy.com/media/mGK1g88HZRa2FlKGbz/giphy.gif',
+        'https://media.giphy.com/media/10xZU9b7JBx14s/giphy.gif',
+        'https://media.giphy.com/media/KZd26L2o8QXtK/giphy.gif',
+      ],
+      'laugh': [
+        'https://media.giphy.com/media/lQ1nXVifuLqyVAH2Gu/giphy.gif',
+        'https://media.giphy.com/media/ZqlvCTNHpqrio/giphy.gif',
+        'https://media.giphy.com/media/BBAdXxBAXp3wc/giphy.gif',
+        'https://media.giphy.com/media/26tPo9rksWnfPo4HS/giphy.gif',
+        'https://media.giphy.com/media/reJOGQ43nNeGk/giphy.gif',
+        'https://media.giphy.com/media/LBA8IfDSb7TBS/giphy.gif',
+        'https://media.giphy.com/media/dw5AJ0ZpLixsQ/giphy.gif',
+        'https://media.giphy.com/media/xiN7gD9cxUUl2fmRLa/giphy.gif',
+        'https://media.giphy.com/media/ff0dv4KMGxjna/giphy.gif',
+      ],
+      'boo': [
+        'https://media.giphy.com/media/CfbDPJ17xZwqI/giphy.gif',
+        'https://media.giphy.com/media/u5kEMRnol8SMU/giphy.gif',
+        'https://media.giphy.com/media/6IGNW4wiyU8Mw/giphy.gif',
+        'https://media.giphy.com/media/13Ev9571xt8Bdm/giphy.gif',
+        'https://media.giphy.com/media/l46CqUyDaeFmpqZ3i/giphy.gif'
+      ]
+    }
+
+    actions_list = {
+      'clap': {
+        3: [
+          {
+            volume: 0.6,
+            audio: clap_one
+          }
+        ],
+        5: [
+          {
+            volume: 0.6,
+            audio: clap_few
+          }
+        ],
+        10: [
+          {
+            volume: 0.6,
+            audio: clap_alot
+          }
+        ],
+        20: [
+          {
+            volume: 0.7,
+            audio: clap_whistle
+          }
+        ]
+      },
+      'laugh': {
+        3: [
+          {
+            volume: 0.2,
+            audio: laugh
+          }
+        ],
+        5: [
+          {
+            volume: 0.4,
+            audio: laugh
+          }
+        ],
+        10: [
+          {
+            volume: 0.7,
+            audio: laugh
+          }
+        ],
+      },
+      'boo': {
+        10: [
+          {
+            volume: 0.2,
+            audio: boo
+          }
+        ],
+        15: [
+          {
+            volume: 0.4,
+            audio: boo
+          }
+        ],
+        30: [
+          {
+            volume: 0.7,
+            audio: boo
+          }
+        ],
+      }
+    }
+
+
+    main_event = false;
+    main_event_count = 0;
+    previous_iteration_event_count = 0
+    socket.on("actions_count", function (data) {
+      iteration_event_count = 0
+      for (let action in data) {
+        if (action != main_event && data[action] > main_event_count) {
+          main_event_count = data[action]
+          main_event = action
+        }
+
+        if (data[action] > 1 && reactionsStatus == true) {
+          iteration_event_count = data[action];
+          for (let occurrances in actions_list[action]) {
+            if (data[action] >= occurrances) {
+              actions_list[action][occurrances].forEach((audio_obj) => {
+                audio_obj.audio.volume = audio_obj.volume
+                audio_obj.audio.play()
+              })
+            }
+          }
+        }
+      }
+      if (iteration_event_count == 0) {
+        document.querySelector('.gif').style.display = 'none';
+      } else if (previous_iteration_event_count == 0) {
+        gif_url = gifs[main_event][Math.floor(Math.random() * gifs[main_event].length)]
+        document.querySelector('.gif').setAttribute('src', gif_url);
+        document.querySelector('.gif').style.display = 'block';
+      }
+
+      previous_iteration_event_count = iteration_event_count;
+      main_event_count = 0;
+    });
+
+
+    socket.on("timerReset", function (seconds) {
+      console.log('RESET TIMER!!');
+      startTimer(seconds);
+      time_warning = false;
+      // time_gif = false;
+    });
+
+    socket.on("addTime", function () {
+      console.log('time added')
+      addTime(1);
+    })
+
+    socket.on("setReactionStatus", function (status) {
+      reactionsStatus = status;
+    })
+  </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Spam your emotions!</title>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        .no-select {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none;     /* Internet Explorer/Edge */
+            user-select: none;         /* Standard syntax */
+        }
+    </style>
+  </head>
+  <body>
+
+      <div class="container py-5">
+        <div class="row">
+          <div class="col-md">
+            <div data-action-name="clap" class="action card my-2 mx-5 bg-dark text-white" style="cursor: pointer;">
+              <div class="card-body no-select">
+                <div style="text-align:center;font-size:xx-large">👏</div>
+                <div style="text-align:center;font-size:xx-large" class="card-title">CLAP</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md">
+            <div data-action-name="laugh" class="action card my-2 mx-5 bg-dark text-white" style="cursor: pointer;">
+              <div class="card-body no-select">
+                <div style="text-align:center;font-size:xx-large">😂</div>
+                <div style="text-align:center;font-size:xx-large" class="card-title">HAHA</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md">
+            <div data-action-name="boo" class="action card my-2 mx-5 bg-dark text-white" style="cursor: pointer;">
+              <div class="card-body no-select">
+                <div style="text-align:center;font-size:xx-large">👎</div>
+                <div style="text-align:center;font-size:xx-large" class="card-title">BOO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="display: none;">
+          <div class="col-md">
+            <div data-action-name="addTime" class="add-time card my-2 mx-5 bg-dark text-white" style="cursor: pointer;">
+              <div class="card-body">
+                <div style="text-align:center;font-size:xx-large">⌛</div>
+                <div style="text-align:center;font-size:xx-large" class="card-title">ADD TIME</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+      function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+      }
+
+      function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
+
+
+      var socket = io();
+      socket.on('connect', function () {
+        socket.emit('join', 'emitters');
+      });
+
+      var auto_generated_id = '_' + Math.random().toString(36).substr(2, 9);
+
+
+      document.querySelectorAll('.action').forEach(item => {
+        item.addEventListener('click', e => {
+          e.preventDefault();
+          socket.emit('action', e.target.closest('.action').getAttributeNode("data-action-name").value, auto_generated_id);
+        })
+      });
+
+      // Add time button behavior
+      function disableAddTime() {
+        document.querySelector('.add-time').classList.add("bg-secondary");
+        document.querySelector('.add-time').classList.remove('bg-dark');
+        setCookie('add_time', true, 1);
+      }
+
+      function enableAddTime() {
+        document.querySelector('.add-time').classList.remove("bg-secondary");
+        document.querySelector('.add-time').classList.add('bg-dark');
+        setCookie('add_time', false, 1);
+      }
+
+      if (getCookie('add_time')) {
+        disableAddTime()
+      }
+      document.querySelector('.add-time').addEventListener('click', e => {
+        e.preventDefault();
+        socket.emit('addTime');
+        disableAddTime()
+      })
+
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title>Hello, world!</title>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body, html {
+      height: 100%;
+      background-color: rgb(43, 43, 43);
+    }
+
+    .gif {
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+
+<body>
+  <img src="https://media.giphy.com/media/l3q2XhfQ8oCkm1Ts4/giphy.gif" class="gif" style="display:none;" />
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var socket = io();
+    socket.on('connect', function () {
+      socket.emit('join', 'listeners');
+    });
+
+    var clap_one = new Audio('clap_one.mp3');
+    var clap_few = new Audio('clap_few.mp3');
+    var clap_alot = new Audio('clap_alot.mp3');
+    var clap_whistle = new Audio('clap_whistle.mp3');
+    var laugh = new Audio('laugh.mp3');
+    var boo = new Audio('boo.mp3');
+
+    var playing_gif = false
+    var gifs = {
+      'clap': [
+        'https://media.giphy.com/media/l3q2XhfQ8oCkm1Ts4/giphy.gif',
+        'https://media.giphy.com/media/ZU9QbQtuI4Xcc/giphy.gif',
+        'https://media.giphy.com/media/cdXpgeB32BekIGzBNh/giphy.gif',
+        'https://media.giphy.com/media/humidv0MqqdO5ZoYhn/giphy.gif',
+        'https://media.giphy.com/media/26gsspfbt1HfVQ9va/giphy.gif',
+        'https://media.giphy.com/media/l49JCSwMXyxHnYJws/giphy.gif',
+        'https://media.giphy.com/media/mGK1g88HZRa2FlKGbz/giphy.gif',
+        'https://media.giphy.com/media/10xZU9b7JBx14s/giphy.gif',
+        'https://media.giphy.com/media/KZd26L2o8QXtK/giphy.gif',
+      ],
+      'laugh': [
+        'https://media.giphy.com/media/lQ1nXVifuLqyVAH2Gu/giphy.gif',
+        'https://media.giphy.com/media/ZqlvCTNHpqrio/giphy.gif',
+        'https://media.giphy.com/media/BBAdXxBAXp3wc/giphy.gif',
+        'https://media.giphy.com/media/26tPo9rksWnfPo4HS/giphy.gif',
+        'https://media.giphy.com/media/reJOGQ43nNeGk/giphy.gif',
+        'https://media.giphy.com/media/LBA8IfDSb7TBS/giphy.gif',
+        'https://media.giphy.com/media/dw5AJ0ZpLixsQ/giphy.gif',
+        'https://media.giphy.com/media/xiN7gD9cxUUl2fmRLa/giphy.gif',
+        'https://media.giphy.com/media/ff0dv4KMGxjna/giphy.gif',
+      ],
+      'boo': [
+        'https://media.giphy.com/media/CfbDPJ17xZwqI/giphy.gif',
+        'https://media.giphy.com/media/u5kEMRnol8SMU/giphy.gif',
+        'https://media.giphy.com/media/6IGNW4wiyU8Mw/giphy.gif',
+        'https://media.giphy.com/media/13Ev9571xt8Bdm/giphy.gif',
+        'https://media.giphy.com/media/l46CqUyDaeFmpqZ3i/giphy.gif'
+      ]
+    }
+
+    actions_list = {
+      'clap': {
+        1: [
+          {
+            volume: 0.5,
+            audio: clap_one
+          }
+        ],
+        8: [
+          {
+            volume: 1,
+            audio: clap_one
+          }
+        ],
+        10: [
+          {
+            volume: 1,
+            audio: clap_one
+          },
+          {
+            volume: 0.5,
+            audio: clap_few
+          }
+        ],
+        20: [
+          {
+            volume: 0.5,
+            audio: clap_one
+          },
+          {
+            volume: 1,
+            audio: clap_few
+          }
+        ],
+        30: [
+          {
+            volume: 0,
+            audio: clap_one
+          },
+          {
+            volume: 0.5,
+            audio: clap_few
+          },
+          {
+            volume: 1,
+            audio: clap_alot
+          }
+        ],
+        40: [
+          {
+            volume: 1,
+            audio: clap_whistle
+          }
+        ]
+      },
+      'laugh': {
+        5: [
+          {
+            volume: 0.2,
+            audio: laugh
+          }
+        ],
+        8: [
+          {
+            volume: 0.5,
+            audio: laugh
+          }
+        ],
+        20: [
+          {
+            volume: 1,
+            audio: laugh
+          }
+        ],
+      },
+      'boo': {
+        5: [
+          {
+            volume: 0.2,
+            audio: boo
+          }
+        ],
+        8: [
+          {
+            volume: 0.5,
+            audio: boo
+          }
+        ],
+        20: [
+          {
+            volume: 1,
+            audio: boo
+          }
+        ],
+      }
+    }
+
+
+    main_event = false;
+    main_event_count = 0;
+    previous_iteration_event_count = 0
+    socket.on("actions_count", function (data) {
+      iteration_event_count = 0
+      for (let action in data) {
+        if (action != main_event && data[action] > main_event_count) {
+          main_event_count = data[action]
+          main_event = action
+        }
+	console.log('Actions: ' + data[action])
+        if (data[action] > 1) {
+          iteration_event_count = data[action];
+          for (let occurrances in actions_list[action]) {
+            if (data[action] >= occurrances) {
+              actions_list[action][occurrances].forEach((audio_obj) => {
+                audio_obj.audio.volume = audio_obj.volume
+                audio_obj.audio.play()
+		console.log(`Playing audio: ${audio_obj.audio.src}`)
+              })
+            }
+		else {
+			console.log('Not enough actions');
+		}
+          }
+        }
+      }
+      if (iteration_event_count == 0) {
+        document.querySelector('.gif').style.display = 'none';
+      } else if (previous_iteration_event_count == 0) {
+        gif_url = gifs[main_event][Math.floor(Math.random()*gifs[main_event].length)]
+        document.querySelector('.gif').setAttribute('src', gif_url);
+        document.querySelector('.gif').style.display = 'block';
+      }
+
+      previous_iteration_event_count = iteration_event_count;
+      main_event_count = 0;
+    });
+  </script>
+</body>
+
+</html>

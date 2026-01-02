@@ -8,6 +8,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+app.use(express.static(__dirname))
 app.use(express.static(__dirname + '/audios'))
 app.use(express.static(__dirname + '/images'))
 app.use(express.static(__dirname + '/css'))

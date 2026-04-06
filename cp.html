@@ -18,6 +18,26 @@
 <body>
 
     <div class="container py-5">
+        <h1>BOT</h1>
+        <div class="row">
+            <div class="col-md">
+                <div>Zoom Meeting URL:</div>
+                <input type="text" class="form-control meeting-url" placeholder="https://zoom.us/j/123456?pwd=abc">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md mt-2 d-grid gap-2">
+                <a class="btn btn-success btn-lg action-start-bot" type="button">Start Bot</a>
+                <a class="btn btn-danger btn-lg action-stop-bot" type="button">Stop Bot</a>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md">
+                <span class="badge bg-secondary bot-status">Not running</span>
+            </div>
+        </div>
+
+        <hr/>
         <h1>TIMER</h1>
         <div class="row">
             <div class="col-md">
@@ -73,6 +93,49 @@
 
         document.querySelector('.action-disable-reactions').addEventListener('click', e => {
             socket.emit('setReactionStatus', false);
+        });
+
+        // Bot controls
+        document.querySelector('.action-start-bot').addEventListener('click', e => {
+            var url = document.querySelector('.meeting-url').value;
+            if (!url) return;
+            socket.emit('botStart', url);
+        });
+
+        document.querySelector('.action-stop-bot').addEventListener('click', e => {
+            socket.emit('botStop');
+        });
+
+        socket.on('botStatus', function (data) {
+            var badge = document.querySelector('.bot-status');
+            var statusLabels = {
+                'authenticating': 'Authenticating...',
+                'authenticated': 'Authenticated',
+                'joining': 'Joining meeting...',
+                'in_meeting': 'In meeting',
+                'mic_ready': 'Active - sending audio',
+                'starting': 'Starting...',
+                'already_running': 'Already running',
+                'stopped': 'Stopped',
+                'ended': 'Meeting ended',
+                'error': data.message || 'Error'
+            };
+            var statusColors = {
+                'authenticating': 'bg-warning',
+                'authenticated': 'bg-success',
+                'joining': 'bg-warning',
+                'in_meeting': 'bg-success',
+                'mic_ready': 'bg-success',
+                'starting': 'bg-warning',
+                'already_running': 'bg-warning',
+                'stopped': 'bg-secondary',
+                'ended': 'bg-secondary',
+                'error': 'bg-danger'
+            };
+
+            badge.textContent = statusLabels[data.status] || data.status;
+            badge.classList.remove('bg-secondary', 'bg-success', 'bg-warning', 'bg-danger');
+            badge.classList.add(statusColors[data.status] || 'bg-secondary');
         });
 
     </script>

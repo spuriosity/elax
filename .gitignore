@@ -1,7 +1,10 @@
 .vscode/
 venv*
+.venv/
 .idea/
 __pycache__/
+*.pyc
+*.egg-info/
 protos
 Dockerfile-local
 .python-version
@@ -13,6 +16,10 @@ deployment/Chart.yaml
 *.DS_Store
 docs/build/
 pytest.ini
-node_modules/
 .env
 CLAUDE*
+
+# Generated PCM files
+pcm/
+
+# uv

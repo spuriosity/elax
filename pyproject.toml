@@ -1,0 +1,19 @@
+[project]
+name = "elax-python"
+version = "0.1.0"
+description = "Real-time audience reaction system for Zoom meetings"
+requires-python = ">=3.12"
+dependencies = [
+    "flask",
+    "python-socketio",
+    "python-engineio",
+    "eventlet",
+    "python-dotenv",
+    "numpy",
+    "PyJWT",
+    "requests>=2.33.1",
+    "websocket-client>=1.9.0",
+]
+
+[project.scripts]
+elax = "server:main"

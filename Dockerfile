@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -6,13 +6,13 @@ ENV PYTHONUNBUFFERED=1
 
 # System dependencies for Zoom SDK + audio
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.12 python3.12-venv python3.12-dev \
+    python3 python3-venv python3-dev \
     ffmpeg \
     pulseaudio \
     alsa-utils \
     libglib2.0-0 \
     libglib2.0-dev \
-    libgirepository1.0-dev \
+    libgirepository-1.0-1 \
     gir1.2-glib-2.0 \
     curl \
     ca-certificates \

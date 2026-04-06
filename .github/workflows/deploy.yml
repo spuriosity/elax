@@ -1,4 +1,4 @@
-name: Deploy to Hub
+name: Build and Push
 
 on:
   push:
@@ -33,38 +33,3 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.HUB_HOST }}
-          username: root
-          key: ${{ secrets.HUB_SSH_KEY }}
-          script: |
-            set -e
-
-            IMAGE="ghcr.io/${{ github.repository }}:latest"
-
-            # Pull latest image
-            docker pull "$IMAGE"
-
-            # Stop old container if running
-            docker stop elax 2>/dev/null || true
-            docker rm elax 2>/dev/null || true
-
-            # Start new container
-            docker run -d \
-              --name elax \
-              --restart unless-stopped \
-              -p 127.0.0.1:8081:8081 \
-              -e APP_PORT=8081 \
-              --env-file /opt/elax/.env \
-              "$IMAGE"
-
-            # Verify
-            sleep 3
-            docker ps | grep elax
